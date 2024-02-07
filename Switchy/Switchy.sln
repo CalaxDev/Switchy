@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.8.34330.188
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Switchy", "Switchy\Switchy.csproj", "{1AFF2CBD-9E5F-47FA-9125-B551C60F980C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Switchy", "Switchy\Switchy.csproj", "{0CB8A335-8331-45D4-BC63-5EE00C078F74}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,15 +11,15 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{1AFF2CBD-9E5F-47FA-9125-B551C60F980C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1AFF2CBD-9E5F-47FA-9125-B551C60F980C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1AFF2CBD-9E5F-47FA-9125-B551C60F980C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1AFF2CBD-9E5F-47FA-9125-B551C60F980C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0CB8A335-8331-45D4-BC63-5EE00C078F74}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0CB8A335-8331-45D4-BC63-5EE00C078F74}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0CB8A335-8331-45D4-BC63-5EE00C078F74}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0CB8A335-8331-45D4-BC63-5EE00C078F74}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {4139A4D3-BFEF-4F2E-B998-F2B8746E1B87}
+		SolutionGuid = {F590C509-52C0-46A2-A569-AA63F11139EE}
 	EndGlobalSection
 EndGlobal

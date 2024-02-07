@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Switchy
+namespace Switchy.Utils
 {
     //Taken from https://stackoverflow.com/questions/33776387/dont-raise-textchanged-while-continuous-typing
     public class TypeAssistant
@@ -23,7 +23,7 @@ namespace Switchy
         }
         public void TextChanged()
         {
-            _waitingTimer.Change(WaitingMilliSeconds, System.Threading.Timeout.Infinite);
+            _waitingTimer.Change(WaitingMilliSeconds, Timeout.Infinite);
         }
     }
 }
