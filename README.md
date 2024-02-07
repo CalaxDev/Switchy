@@ -4,7 +4,7 @@
 
 A little "Window Switching" Application I created for Leon of Bonjwa.  
 
-It currently uses the .Net 8.0 Framework and the Windows Forms UI Framework.
+It currently uses the .Net 8.0 Framework and the Windows Presentation Foundation (WPF) Framework.
 
 ## Run the Application
 
@@ -23,9 +23,3 @@ Hopefully, a GitHub Releases Page exists by now. If not, continue with **Develop
 * .Net 8.0 SDK (or higher)
 
 After installing everything simply open the .sln-File with Visual Studio or the project folder with VSCode and you should be good to go.
-
-## TODOs
-
-* Probably switch the UI to Serverside or WebAssembly Blazor to remove the Windows dependency (through WinForms)
-* Other fancy features like Auto-Process-Refresh and QoL features
-* Improve ugly code
