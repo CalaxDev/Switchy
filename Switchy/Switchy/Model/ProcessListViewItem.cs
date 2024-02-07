@@ -1,15 +1,26 @@
-﻿using System.Diagnostics;
+﻿using System.ComponentModel;
+using System.Diagnostics;
+using System.Runtime.CompilerServices;
 
 namespace Switchy.Model
 {
-    public class ProcessListViewItem
+    public class ProcessListViewItem : INotifyPropertyChanged
     {
         public Process Process { get; }
-        public bool IsVisible { get; set; }
+        public bool HasExited { get; internal set; }
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         public ProcessListViewItem(Process p)
         {
             Process = p;
+            p.EnableRaisingEvents = true;
+            p.Exited += P_Exited;
+        }
+
+        private void P_Exited(object? sender, EventArgs e)
+        {
+            this.HasExited = true;
+            NotifyPropertyChanged(nameof(Process.HasExited));
         }
 
         public override string ToString()
@@ -23,6 +34,10 @@ namespace Switchy.Model
                 return Process.Id.Equals(it.Process.Id);
 
             return false;
+        }
+        private void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
     }
 }

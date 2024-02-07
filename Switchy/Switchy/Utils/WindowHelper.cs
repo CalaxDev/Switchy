@@ -9,8 +9,10 @@ namespace Switchy.Utils
     {
         private PeriodicTimer _myTimer;
         private ProcessListViewItem? _current = null;
-        private List<ProcessListViewItem> _selectedItems = selectedItems.ToList();
         private double _timeInSeconds = timeInSeconds;
+
+        private List<ProcessListViewItem> selectedItems_backingField = selectedItems.ToList();
+        private List<ProcessListViewItem> _selectedItems { get => selectedItems_backingField.FindAll(x => !x.HasExited); set => selectedItems_backingField = value; }
 
         private void BringProcessToFront(Process process)
         {
@@ -40,7 +42,7 @@ namespace Switchy.Utils
         {
             if (!_selectedItems.Any())
             {
-                MessageBox.Show("You currently have no windows selected!");
+                MessageBox.Show("You currently have no windows selected or all selected process have already exited!");
                 return -1;
             }
 

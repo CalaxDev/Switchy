@@ -9,6 +9,7 @@ using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows;
 
 namespace Switchy.Utils
 {
@@ -38,6 +39,12 @@ namespace Switchy.Utils
 
         internal void AddSelectedItems(IEnumerable<ProcessListViewItem> selectedItems)
         {
+            if (selectedItems.Any(x => x.HasExited))
+            {
+                MessageBox.Show("At least one of the selected processes has already exited! Please refresh the list and try again!");
+                return;
+            }
+
             foreach (var item in selectedItems.ToArray())
             {
                 if (SelectedProcesses.IndexOf(item) == -1)
@@ -74,7 +81,8 @@ namespace Switchy.Utils
 
         internal void RemoveSelectedItems(IEnumerable<ProcessListViewItem> selectedItemsToRemove)
         {
-            foreach (var item in selectedItemsToRemove.ToArray()) { 
+            foreach (var item in selectedItemsToRemove.ToArray())
+            {
                 SelectedProcesses.Remove(item);
                 AvailableProcesses.Add(item);
             }
