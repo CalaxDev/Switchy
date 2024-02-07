@@ -81,5 +81,21 @@ namespace Switchy.Utils
 
             FilterAvailableProcessList(_lastFilterText);
         }
+
+        internal void TryMoveItemUp(ProcessListViewItem item)
+        {
+            var curIndex = SelectedProcesses.IndexOf(item);
+            if (curIndex == 0) return;
+            SelectedProcesses.Remove(item);
+            SelectedProcesses.Insert(curIndex - 1, item);
+        }
+
+        internal void TryMoveItemDown(ProcessListViewItem item)
+        {
+            var curIndex = SelectedProcesses.IndexOf(item);
+            if (curIndex == SelectedProcesses.Count - 1) return;
+            SelectedProcesses.Remove(item);
+            SelectedProcesses.Insert(curIndex + 1, item);
+        }
     }
 }

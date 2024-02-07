@@ -36,31 +36,32 @@ namespace Switchy.Utils
                 _current = _selectedItems.First();
         }
 
-        public void Start()
+        public int Start()
         {
-            EnsureTimerStopped();
-
             if (!_selectedItems.Any())
-                return;
+            {
+                MessageBox.Show("You currently have no windows selected!");
+                return -1;
+            }
+
+            if (_timeInSeconds <= 0)
+            {
+                MessageBox.Show($"Your time in seconds might be off - it is currently set to {_timeInSeconds} seconds");
+                return -1;
+            }
 
             var res = MessageBox.Show($"Switching between selected windows every {_timeInSeconds} seconds. Press OK to start!", "Confirm", MessageBoxButton.OKCancel);
             if (res == MessageBoxResult.Cancel)
             {
                 MessageBox.Show("Timer canceled!");
-                return;
+                return -1;
             }
 
             _current = _selectedItems.First();
 
             _ = RunInBackground(TimeSpan.FromSeconds(_timeInSeconds), () => DisplayNextWindow());
             DisplayNextWindow();
-            return;
-        }
-
-        private void EnsureTimerStopped()
-        {
-            if (_myTimer != null)
-                MessageBox.Show("Timer is already running!");
+            return 0;
         }
 
         async Task RunInBackground(TimeSpan timeSpan, Action action)
@@ -76,7 +77,8 @@ namespace Switchy.Utils
         {
             try
             {
-                _myTimer.Dispose();
+                if (_myTimer != null)
+                    _myTimer.Dispose();
             }
             catch
             {

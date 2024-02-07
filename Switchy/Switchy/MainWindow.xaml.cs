@@ -74,14 +74,29 @@ namespace Switchy
 
         private void StartButton_Click(object sender, RoutedEventArgs e)
         {
-            _windowHelper = new WindowHelper(ProcessManager.SelectedProcesses, double.Parse(TimerInSeconds.Text));
-            _windowHelper.Start();
+            if (_windowHelper != null)
+            {
+                MessageBox.Show("Window switching is already in progress! Please stop before starting again.");
+                return;
+            }
+
+            double parseResult;
+            if (!double.TryParse(TimerInSeconds.Text, out parseResult))
+            {
+                MessageBox.Show("You need to enter a value for the window switching time in seconds!");
+                return;
+            }
+
+            _windowHelper = new WindowHelper(ProcessManager.SelectedProcesses, parseResult);
+            if (_windowHelper.Start() == -1)
+                StopButton_Click(null!, null!);
         }
 
         private void StopButton_Click(object sender, RoutedEventArgs e)
         {
             _windowHelper.Dispose();
             _windowHelper = null!;
+            MessageBox.Show("Switching windows stopped.");
         }
 
         private void NumericOnly(System.Object sender, System.Windows.Input.TextCompositionEventArgs e)
@@ -99,11 +114,8 @@ namespace Switchy
             var selectedItems = SelectedProcessListView.SelectedItems;
             foreach (ProcessListViewItem item in selectedItems.Cast<ProcessListViewItem>().ToArray())
             {
-                var curIndex = ProcessManager.SelectedProcesses.IndexOf(item);
-                if (curIndex == 0) return;
-                ProcessManager.SelectedProcesses.Remove(item);
-                ProcessManager.SelectedProcesses.Insert(curIndex - 1, item);
-                SelectedProcessListView.SelectedItems.Add(item);
+                ProcessManager.TryMoveItemUp(item);
+                SelectedProcessListView.SelectedItem = item;
             }
         }
 
@@ -111,11 +123,8 @@ namespace Switchy
         {
             foreach (ProcessListViewItem item in SelectedProcessListView.SelectedItems.Cast<ProcessListViewItem>().ToArray())
             {
-                var curIndex = ProcessManager.SelectedProcesses.IndexOf(item);
-                if (curIndex == ProcessManager.SelectedProcesses.Count - 1) return;
-                ProcessManager.SelectedProcesses.Remove(item);
-                ProcessManager.SelectedProcesses.Insert(curIndex + 1, item);
-                SelectedProcessListView.SelectedItems.Add(item);
+                ProcessManager.TryMoveItemDown(item);
+                SelectedProcessListView.SelectedItem = item;
             }
         }
     }
