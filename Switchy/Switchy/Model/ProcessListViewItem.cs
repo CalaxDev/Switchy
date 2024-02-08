@@ -13,8 +13,12 @@ namespace Switchy.Model
         public ProcessListViewItem(Process p)
         {
             Process = p;
-            p.EnableRaisingEvents = true;
-            p.Exited += P_Exited;
+            try
+            {
+                p.EnableRaisingEvents = true;
+                p.Exited += P_Exited;
+            }
+            catch (Exception) { }
         }
 
         private void P_Exited(object? sender, EventArgs e)
