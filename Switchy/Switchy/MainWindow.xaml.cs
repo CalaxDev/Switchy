@@ -3,7 +3,7 @@ using Switchy.Utils;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Threading;
-
+using System.Text.RegularExpressions;
 namespace Switchy
 {
     /// <summary>
@@ -11,19 +11,21 @@ namespace Switchy
     /// </summary>
     public partial class MainWindow : Window
     {
-        private WindowHelper _windowHelper;
+        private WindowHelper? _windowHelper;
+        private DispatcherTimer? _textChangedTimer;
+        [GeneratedRegex("[^0-9]")] private static partial Regex NumericRegex();
 
         public ProcessManager ProcessManager { get; set; }
-        private DispatcherTimer _textChangedTimer { get; set; }
+
         public MainWindow()
         {
             InitializeComponent();
             ProcessManager = new ProcessManager();
             AvailableProcessListView.ItemsSource = ProcessManager.FilteredAvailableProcesses;
-            AvailableProcessListView.SelectionMode = System.Windows.Controls.SelectionMode.Single;
+            AvailableProcessListView.SelectionMode = SelectionMode.Single;
             AvailableProcessListView.Items.SortDescriptions.Add(new System.ComponentModel.SortDescription("Process.ProcessName", System.ComponentModel.ListSortDirection.Ascending));
             SelectedProcessListView.ItemsSource = ProcessManager.SelectedProcesses;
-            SelectedProcessListView.SelectionMode = System.Windows.Controls.SelectionMode.Single;
+            SelectedProcessListView.SelectionMode = SelectionMode.Single;
             AlgoVersionSelector.ItemsSource = Enum.GetValues(typeof(WindowSwitcherType)).Cast<WindowSwitcherType>();
             AlgoVersionSelector.SelectedItem = WindowSwitcherType.Normal;
         }
@@ -33,8 +35,10 @@ namespace Switchy
 
             if (_textChangedTimer == null)
             {
-                _textChangedTimer = new DispatcherTimer();
-                _textChangedTimer.Interval = TimeSpan.FromMilliseconds(100);
+                _textChangedTimer = new DispatcherTimer
+                {
+                    Interval = TimeSpan.FromMilliseconds(100)
+                };
                 _textChangedTimer.Tick += new EventHandler(HandleTypingTimerTimeout);
             }
 
@@ -51,20 +55,20 @@ namespace Switchy
             timer.Stop();
         }
 
-        private void SelectItemsButton_Click(object sender, RoutedEventArgs e)
+        private void SelectItemsButton_Click(object? sender, RoutedEventArgs? e)
         {
             ProcessManager.AddSelectedItems(AvailableProcessListView.SelectedItems.Cast<ProcessListViewItem>());
         }
 
         private void AvailableProcessListView_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            SelectItemsButton_Click(null!, null!);
+            SelectItemsButton_Click(sender, e);
         }
         private void SelectedProcessListView_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
         {
-            RemoveItemsFromSelection_Click(null!, null!);
+            RemoveItemsFromSelection_Click(sender, e);
         }
-        private void RemoveItemsFromSelection_Click(object sender, RoutedEventArgs e)
+        private void RemoveItemsFromSelection_Click(object? sender, RoutedEventArgs? e)
         {
             ProcessManager.RemoveSelectedItems(SelectedProcessListView.SelectedItems.Cast<ProcessListViewItem>());
         }
@@ -82,22 +86,21 @@ namespace Switchy
                 return;
             }
 
-            double parseResult;
-            if (!double.TryParse(TimerInSeconds.Text, out parseResult))
+            if (!double.TryParse(TimerInSeconds.Text, out double parseResult))
             {
                 MessageBox.Show("You need to enter a value for the window switching time in seconds!");
                 return;
             }
 
-            _windowHelper = new WindowHelper(ProcessManager.SelectedProcesses, parseResult, (WindowSwitcherType)Enum.Parse(typeof(WindowSwitcherType), AlgoVersionSelector.SelectedItem?.ToString() ?? Enum.GetName(WindowSwitcherType.Normal)!, true));
+            _windowHelper = new WindowHelper(ProcessManager.SelectedProcesses, parseResult, (WindowSwitcherType)Enum.Parse(typeof(WindowSwitcherType), AlgoVersionSelector.SelectedItem?.ToString() ?? nameof(WindowSwitcherType.Normal), true));
             if (_windowHelper.Start() == -1)
-                StopButton_Click(null!, null!);
+                StopButton_Click(sender, e);
         }
 
         private void StopButton_Click(object sender, RoutedEventArgs e)
         {
-            _windowHelper.Dispose();
-            _windowHelper = null!;
+            _windowHelper?.Dispose();
+            _windowHelper = null;
             MessageBox.Show("Switching windows stopped.");
         }
 
@@ -107,7 +110,7 @@ namespace Switchy
         }
         private static bool IsTextNumeric(string str)
         {
-            System.Text.RegularExpressions.Regex reg = new System.Text.RegularExpressions.Regex("[^0-9]");
+            System.Text.RegularExpressions.Regex reg = NumericRegex();
             return reg.IsMatch(str);
         }
 

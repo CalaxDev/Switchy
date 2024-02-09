@@ -13,7 +13,7 @@ namespace Switchy.Model
         public ProcessListViewItem(Process p)
         {
             Process = p;
-            try
+            try //Needed to prevent application crash when executing switchy without debug mode or admin rights; Effectively disables process exit listview binding however.
             {
                 p.EnableRaisingEvents = true;
                 p.Exited += P_Exited;
@@ -42,6 +42,11 @@ namespace Switchy.Model
         private void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine(Process.Id);
         }
     }
 }
