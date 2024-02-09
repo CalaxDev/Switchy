@@ -4,7 +4,9 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:muxc="using:Microsoft.UI.Xaml.Controls"
-        xmlns:local="clr-namespace:Switchy"
+        xmlns:local="clr-namespace:Switchy"     
+        xmlns:System="clr-namespace:System;assembly=mscorlib"
+        xmlns:TestAlias="clr-namespace:Switchy.Utils"
         mc:Ignorable="d"
         Title="Switchy" Height="500" Width="1000">
     <Grid>
@@ -38,6 +40,7 @@
                     </GridView>
                 </ListView.View>
             </ListView>
+            <ComboBox Name="AlgoVersionSelector" SelectedItem="NORMAL" Height="25" Margin="10,0,0,0" Grid.Row="3" Width="150" HorizontalAlignment="Left" />
         </Grid>
         <StackPanel Grid.Column="1" Style="{StaticResource GlobalStackPanelStyle}" VerticalAlignment="Center">
             <Button Content=">>" Name="SelectItemsButton" Click="SelectItemsButton_Click"/>

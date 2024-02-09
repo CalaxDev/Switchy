@@ -2,17 +2,22 @@
 using System.Diagnostics;
 using System.Windows;
 
-
 namespace Switchy.Utils
 {
-    public class WindowHelper(IEnumerable<ProcessListViewItem> selectedItems, double timeInSeconds) : IDisposable
+    public enum WindowSwitcherType
     {
-        private PeriodicTimer _myTimer;
+        Normal,
+        WithThreadAttach,
+        SwitchToThisWindow
+    }
+    public class WindowHelper(IEnumerable<ProcessListViewItem> selectedItems, double timeInSeconds, WindowSwitcherType switcherType) : IDisposable
+    {
+        private PeriodicTimer? _myTimer;
         private ProcessListViewItem? _current = null;
         private double _timeInSeconds = timeInSeconds;
-
-        private List<ProcessListViewItem> selectedItems_backingField = selectedItems.ToList();
-        private List<ProcessListViewItem> _selectedItems { get => selectedItems_backingField.FindAll(x => !x.HasExited); set => selectedItems_backingField = value; }
+        private readonly WindowSwitcherType _switchType = switcherType;
+        private List<ProcessListViewItem> _selectedItemsBackingField = selectedItems.ToList();
+        private List<ProcessListViewItem> _selectedItems { get => _selectedItemsBackingField.FindAll(x => !x.HasExited); set => _selectedItemsBackingField = value; }
 
         private void BringProcessToFront(Process process)
         {
@@ -25,11 +30,57 @@ namespace Switchy.Utils
             User32Helper.SetForegroundWindow(handle);
         }
 
+        private void SwitchWithThreadAttach(Process process)
+        {
+            IntPtr foregroundWindowHandle = User32Helper.GetForegroundWindow();
+
+            nint handle = process.MainWindowHandle;
+            if (User32Helper.IsIconic(handle))
+            {
+                User32Helper.ShowWindow(handle, User32Helper.SW_RESTORE);
+            }
+
+            uint currentThreadId = User32Helper.GetCurrentThreadId();
+            uint temp;
+            uint foregroundThreadId = User32Helper.GetWindowThreadProcessId(foregroundWindowHandle, out temp);
+            User32Helper.AttachThreadInput(currentThreadId, foregroundThreadId, true);
+            User32Helper.SetForegroundWindow(handle);
+            User32Helper.AttachThreadInput(currentThreadId, foregroundThreadId, false);
+        }
+
+        private void SwitchToThisWindow(Process process)
+        {
+            nint handle = process.MainWindowHandle;
+            if (User32Helper.IsIconic(handle))
+            {
+                User32Helper.ShowWindow(handle, User32Helper.SW_RESTORE);
+            }
+
+            User32Helper.SwitchToThisWindow(handle, true);
+        }
+
         private void DisplayNextWindow()
         {
             if (_current == null) { throw new Exception("Something went wrong"); }
 
-            BringProcessToFront(Process.GetProcessById(Convert.ToInt32(_current.Process.Id)));
+            switch (_switchType)
+            {
+                case WindowSwitcherType.Normal:
+                    {
+                        BringProcessToFront(Process.GetProcessById(Convert.ToInt32(_current.Process.Id)));
+                        break;
+                    }
+                case WindowSwitcherType.WithThreadAttach:
+                    {
+                        SwitchWithThreadAttach(Process.GetProcessById(Convert.ToInt32(_current.Process.Id)));
+                        break;
+                    }
+                case WindowSwitcherType.SwitchToThisWindow:
+                    {
+                        SwitchToThisWindow(Process.GetProcessById(Convert.ToInt32(_current.Process.Id)));
+                        break;
+                    }
+            }
 
             var curIndex = _selectedItems.IndexOf(_current);
             if (curIndex < _selectedItems.Count - 1)

@@ -24,6 +24,8 @@ namespace Switchy
             AvailableProcessListView.Items.SortDescriptions.Add(new System.ComponentModel.SortDescription("Process.ProcessName", System.ComponentModel.ListSortDirection.Ascending));
             SelectedProcessListView.ItemsSource = ProcessManager.SelectedProcesses;
             SelectedProcessListView.SelectionMode = System.Windows.Controls.SelectionMode.Single;
+            AlgoVersionSelector.ItemsSource = Enum.GetValues(typeof(WindowSwitcherType)).Cast<WindowSwitcherType>();
+            AlgoVersionSelector.SelectedItem = WindowSwitcherType.Normal;
         }
 
         private void FilterAvailableProcesses(object? sender, TextChangedEventArgs e)
@@ -87,7 +89,7 @@ namespace Switchy
                 return;
             }
 
-            _windowHelper = new WindowHelper(ProcessManager.SelectedProcesses, parseResult);
+            _windowHelper = new WindowHelper(ProcessManager.SelectedProcesses, parseResult, (WindowSwitcherType)Enum.Parse(typeof(WindowSwitcherType), AlgoVersionSelector.SelectedItem?.ToString() ?? Enum.GetName(WindowSwitcherType.Normal)!, true));
             if (_windowHelper.Start() == -1)
                 StopButton_Click(null!, null!);
         }
