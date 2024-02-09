@@ -1,31 +1,34 @@
 ﻿using System.Runtime.InteropServices;
 
-namespace Switchy.Utils
+namespace Switchy.Utils;
+
+internal static partial class User32Helper
 {
-    public static class User32Helper
-    {
-        public const int SW_RESTORE = 9;
-        [DllImport("User32.dll")]
-        public static extern bool IsIconic(nint handle);
+    public const int SW_RESTORE = 9;
+    [LibraryImport("User32.dll")]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    public static partial bool IsIconic(nint handle);
 
-        [DllImport("User32.dll")]
-        public static extern bool SetForegroundWindow(nint handle);
-        [DllImport("User32.dll")]
-        public static extern bool ShowWindow(nint handle, int nCmdShow);
+    [LibraryImport("User32.dll")]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    public static partial bool SetForegroundWindow(nint handle);
+    [LibraryImport("User32.dll")]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    public static partial bool ShowWindow(nint handle, int nCmdShow);
 
-        [DllImport("user32.dll")]
-        public static extern IntPtr GetForegroundWindow();
+    [LibraryImport("user32.dll")]
+    public static partial IntPtr GetForegroundWindow();
 
-        [DllImport("user32.dll", SetLastError = true)]
-        public static extern uint GetWindowThreadProcessId(IntPtr hWnd, out uint lpdwProcessId);
-        [DllImport("kernel32.dll")]
-        public static extern uint GetCurrentThreadId();
+    [LibraryImport("user32.dll", SetLastError = true)]
+    public static partial uint GetWindowThreadProcessId(IntPtr hWnd, out uint lpdwProcessId);
+    [LibraryImport("kernel32.dll")]
+    public static partial uint GetCurrentThreadId();
 
-        [DllImport("user32.dll")]
-        public static extern bool AttachThreadInput(uint idAttach, uint idAttachTo, bool fAttach);
+    [LibraryImport("user32.dll")]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    public static partial bool AttachThreadInput(uint idAttach, uint idAttachTo, [MarshalAs(UnmanagedType.Bool)] bool fAttach);
 
-        [DllImport("user32.dll")]
-        public static extern void SwitchToThisWindow(IntPtr hWnd, bool turnon);
+    [LibraryImport("user32.dll")]
+    public static partial void SwitchToThisWindow(IntPtr hWnd, [MarshalAs(UnmanagedType.Bool)] bool turnon);
 
-    }
 }

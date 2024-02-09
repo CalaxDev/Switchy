@@ -1,52 +1,42 @@
-﻿using System.ComponentModel;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using System.ComponentModel;
 using System.Diagnostics;
-using System.Runtime.CompilerServices;
 
-namespace Switchy.Model
+namespace Switchy.Model;
+
+public partial class ProcessListViewItem(Process p) : ObservableObject
 {
-    public class ProcessListViewItem : INotifyPropertyChanged
+    private Process _process = p;
+    [ObservableProperty]
+    private bool _isExited;
+    public Process Process
     {
-        public Process Process { get; }
-        public bool HasExited { get; internal set; }
-        public event PropertyChangedEventHandler? PropertyChanged;
-
-        public ProcessListViewItem(Process p)
+        get
         {
-            Process = p;
+            return _process;
+        }
+        private set
+        {
+            _process = value;
+
             try //Needed to prevent application crash when executing switchy without debug mode or admin rights; Effectively disables process exit listview binding however.
             {
-                p.EnableRaisingEvents = true;
-                p.Exited += P_Exited;
+                _process.EnableRaisingEvents = true;
+                _process.Exited += P_Exited;
             }
-            catch (Exception) { }
-        }
-
-        private void P_Exited(object? sender, EventArgs e)
-        {
-            this.HasExited = true;
-            NotifyPropertyChanged(nameof(Process.HasExited));
-        }
-
-        public override string ToString()
-        {
-            return Process?.ProcessName ?? "No Process";
-        }
-
-        public override bool Equals(object? obj)
-        {
-            if (obj is ProcessListViewItem it)
-                return Process.Id.Equals(it.Process.Id);
-
-            return false;
-        }
-        private void NotifyPropertyChanged([CallerMemberName] String propertyName = "")
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-
-        public override int GetHashCode()
-        {
-            return HashCode.Combine(Process.Id);
+            catch { }
         }
     }
+
+    private void P_Exited(object? sender, EventArgs e)
+        => IsExited = true;
+
+    public override string ToString()
+        => Process?.ProcessName ?? "No Process";
+
+    public override bool Equals(object? obj)
+        => obj is ProcessListViewItem it && Process.Id.Equals(it.Process.Id);
+
+    public override int GetHashCode()
+        => HashCode.Combine(Process.Id);
 }
