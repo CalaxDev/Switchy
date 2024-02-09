@@ -25,10 +25,9 @@ public class WindowHelper(IEnumerable<ProcessListViewItem> selectedItems, double
     private static void BringProcessToFront(Process process)
     {
         nint handle = process.MainWindowHandle;
+
         if (User32Helper.IsIconic(handle))
-        {
-            User32Helper.ShowWindow(handle, User32Helper.SW_RESTORE);
-        }
+            User32Helper.ShowWindow(handle);
 
         User32Helper.SetForegroundWindow(handle);
     }
@@ -37,35 +36,30 @@ public class WindowHelper(IEnumerable<ProcessListViewItem> selectedItems, double
         nint handle = process.MainWindowHandle;
 
         if (User32Helper.IsIconic(handle))
-            User32Helper.ShowWindow(handle, User32Helper.SW_RESTORE);
+            User32Helper.ShowWindow(handle);
 
         User32Helper.SwitchToThisWindow(handle, true);
     }
 
     private void DisplayNextWindow()
     {
-        if (_current == null) { throw new Exception("Something went wrong"); }
+        if (_current == null)
+            throw new Exception("Something went wrong");
 
         switch (_switchType)
         {
             case WindowSwitcherType.Normal:
-                {
-                    BringProcessToFront(Process.GetProcessById(Convert.ToInt32(_current.Process.Id)));
-                    break;
-                }
+                BringProcessToFront(Process.GetProcessById(Convert.ToInt32(_current.Process.Id)));
+                break;
             case WindowSwitcherType.SwitchToThisWindow:
-                {
-                    SwitchToThisWindow(Process.GetProcessById(Convert.ToInt32(_current.Process.Id)));
-                    break;
-                }
+                SwitchToThisWindow(Process.GetProcessById(Convert.ToInt32(_current.Process.Id)));
+                break;
         }
 
         var curIndex = SelectedItems.IndexOf(_current);
-        if (curIndex < SelectedItems.Count - 1)
-            _current = SelectedItems[curIndex + 1];
-        else
-            _current = SelectedItems.First();
+        _current = curIndex < SelectedItems.Count - 1 ? SelectedItems[curIndex + 1] : SelectedItems.First();
     }
+
 
     public int Start()
     {
@@ -92,7 +86,7 @@ public class WindowHelper(IEnumerable<ProcessListViewItem> selectedItems, double
 
         foreach (var item in SelectedItems)
         {
-            uint foregroundThreadId = User32Helper.GetWindowThreadProcessId(item.Process.MainWindowHandle, out var _);
+            User32Helper.GetWindowThreadProcessId(item.Process.MainWindowHandle, out var foregroundThreadId);
             User32Helper.AttachThreadInput(_ownThreadId, foregroundThreadId, true);
         }
 
