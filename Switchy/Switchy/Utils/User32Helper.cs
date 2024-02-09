@@ -4,7 +4,8 @@ namespace Switchy.Utils;
 
 internal static partial class User32Helper
 {
-    public const int SW_RESTORE = 9;
+    private const int SW_RESTORE = 9;
+
     [LibraryImport("User32.dll")]
     [return: MarshalAs(UnmanagedType.Bool)]
     public static partial bool IsIconic(nint handle);
@@ -15,6 +16,8 @@ internal static partial class User32Helper
     [LibraryImport("User32.dll")]
     [return: MarshalAs(UnmanagedType.Bool)]
     public static partial bool ShowWindow(nint handle, int nCmdShow);
+    public static bool ShowWindow(nint handle)
+        => ShowWindow(handle, SW_RESTORE);
 
     [LibraryImport("user32.dll")]
     public static partial IntPtr GetForegroundWindow();

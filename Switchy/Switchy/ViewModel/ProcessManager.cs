@@ -36,7 +36,7 @@ public partial class ProcessManager : ObservableObject
 
         if (item.IsExited)
         {
-            MessageBox.Show($"Processes has \"{item.Process.ProcessName}\" already exited! Please refresh the list and try again!");
+            MessageBox.Show($"Processes \"{item.Process.ProcessName}\" has already exited! Please refresh the list and try again!");
             return;
         }
 
