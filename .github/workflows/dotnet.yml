@@ -21,14 +21,14 @@ jobs:
       with:
         dotnet-version: 6.0.x
     - name: Restore dependencies
-      run: dotnet restore
+      run: dotnet restore Switchy
     - name: Build
-      run: dotnet build --no-restore
+      run: dotnet build Switchy --no-restore
     - name: Publish
-      run: dotnet publish
+      run: dotnet publish Switchy -p:PublishProfile=FolderProfile 
     # Upload the MSIX package: https://github.com/marketplace/actions/upload-a-build-artifact
     - name: Upload build artifacts
       uses: actions/upload-artifact@v3
       with:
         name: Application
-        path: ${{ env.Wap_Project_Directory }}\Release
+        path: Switchy\Switchy\Release
