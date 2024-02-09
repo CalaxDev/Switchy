@@ -34,4 +34,4 @@ jobs:
       uses: softprops/action-gh-release@v1
       if: startsWith(github.ref, 'refs/tags/')
       with:
-          files: Switchy\Switchy\Release\Switchy.exe
+          files: Switchy/Switchy/Release/Switchy.exe
